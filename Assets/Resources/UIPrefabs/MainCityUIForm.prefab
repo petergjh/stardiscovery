@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 672514605}
   - component: {fileID: 672514607}
   - component: {fileID: 672514606}
-  - component: {fileID: 672514608}
+  - component: {fileID: 633966927}
   m_Layer: 5
   m_Name: TextCountTimer
   m_TagString: Untagged
@@ -77,8 +77,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 60
---- !u!114 &672514608
+  m_Text: new text
+--- !u!114 &633966927
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 672514604}
-  TotalTime: 60
+  TotalTime: 120
 --- !u!1 &735261710833108241
 GameObject:
   m_ObjectHideFlags: 0
