@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 672514604}
-  TotalTime: 120
+  TotalTime: 6
 --- !u!1 &735261710833108241
 GameObject:
   m_ObjectHideFlags: 0
