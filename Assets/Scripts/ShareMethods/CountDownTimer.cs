@@ -6,7 +6,6 @@ using DemoProject;
 using UnityEngine.UI;
 using System;
 using System.Net.NetworkInformation;
-using Microsoft.VisualBasic.Devices;
 
 public class CountDownTimer : MonoBehaviour
 {
@@ -110,43 +109,44 @@ public class CountDownTimer : MonoBehaviour
     }
 
 
+
 // Constructor
-public void myMainPage()
-{
-        //判断当前网络连接状态
+//public void myMainPage()
+//{
+//        //判断当前网络连接状态
 
-        Network nw = new Network();
+//        Network nw = new Network();
 
-        if (nw.IsAvailable)
+//        if (nw.IsAvailable)
 
-            lbmsg.Text = "网络已连接";
+//            lbmsg.Text = "网络已连接";
 
-        else
+//        else
 
-            lbmsg.Text = "网络已断开";
-        //InitializeComponent();
+//            lbmsg.Text = "网络已断开";
+//        //InitializeComponent();
 
-        // Subscribe to the NetworkAvailabilityChanged event
-        DeviceNetworkInformation.NetworkAvailabilityChanged += new EventHandler<NetworkNotificationEventArgs>(NetworkAvailabilityChanged);
-}
+//        // Subscribe to the NetworkAvailabilityChanged event
+//        DeviceNetworkInformation.NetworkAvailabilityChanged += new EventHandler<NetworkNotificationEventArgs>(NetworkAvailabilityChanged);
+//}
 
-void NetworkAvailabilityChanged(object sender, NetworkNotificationEventArgs e)
-{
+//void NetworkAvailabilityChanged(object sender, NetworkNotificationEventArgs e)
+//{
 
-    string msg = "";
-    if (e.IsAvailable)
-    {
-        msg = "网络已连接";
+//    string msg = "";
+//    if (e.IsAvailable)
+//    {
+//        msg = "网络已连接";
 
-    }
-    else
-    {
-        msg = "网络已断开";
-    }
-    Dispatcher.BeginInvoke(() => {
-        lbmsg.Text = msg;
-    });
-}
+//    }
+//    else
+//    {
+//        msg = "网络已断开";
+//    }
+//    Dispatcher.BeginInvoke(() => {
+//        lbmsg.Text = msg;
+//    });
+//}
 
 // 请求网络时间来倒计时
 /// <summary>
@@ -155,19 +155,21 @@ void NetworkAvailabilityChanged(object sender, NetworkNotificationEventArgs e)
 /// <returns></returns>
 IEnumerator NetworkTimeControlIE()
     {
+
+            int nH = (int)DataStandardTime().Hour;
+            int nM = (int)DataStandardTime().Minute;
+            int nS = (int)DataStandardTime().Second;
+
         // 判断网络连接状态
         string url = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
         string[] urls = url.Split(new char[] { ';' });
         if (CheckServeStatus(urls) == true)
         {
-            int nH = (int)DataStandardTime().Hour;
-            int nM = (int)DataStandardTime().Minute;
-            int nS = (int)DataStandardTime().Second;
             totaltime4 = 86400 - ((nH * 60 * 60) + (nM * 60) + nS);
         }
         else
         {
-            totaltime4 = 86400;
+            totaltime4 =10;
         }
 
 
@@ -237,6 +239,7 @@ IEnumerator NetworkTimeControlIE()
         {
             if ((double)errCount / urls.Length >= 0.3)
             {
+                Debug.Log("网络连接异常");
                 return false;
                 //Console.WriteLine("网络异常~连接多次无响应");
             }
@@ -246,11 +249,13 @@ IEnumerator NetworkTimeControlIE()
             //}
             else
             {
+                Debug.Log("网络连接正常");
                 return true;
             }
         }
         else
         {
+                Debug.Log("网络连接正常");
             return true;
             //Console.WriteLine("网络正常");
         }
@@ -351,7 +356,7 @@ IEnumerator NetworkTimeControlIE()
             }
             catch (System.Exception)
             {
-                Debug.Log("服务器请求错误！请检查网络或联系服务器管理员！");
+                Debug.Log("网络错误！");
             }
         }
         char[] sp = new char[1];
