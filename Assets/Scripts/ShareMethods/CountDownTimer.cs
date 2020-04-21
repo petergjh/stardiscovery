@@ -6,6 +6,9 @@ using DemoProject;
 using UnityEngine.UI;
 using System;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.IO;
+using System.Text;
 
 public class CountDownTimer : MonoBehaviour
 {
@@ -163,7 +166,7 @@ IEnumerator NetworkTimeControlIE()
         // 判断网络连接状态
         string url = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
         string[] urls = url.Split(new char[] { ';' });
-        if (CheckServeStatus(urls) == true)
+        if (CheckServeStatus(urls) )
         {
             totaltime4 = 86400 - ((nH * 60 * 60) + (nM * 60) + nS);
         }
@@ -347,18 +350,67 @@ IEnumerator NetworkTimeControlIE()
             Debug.Log("hostName:" + hostName);
             try
             {
-                client.Connect(hostName, portNum);
+                // 同步连接服务器
+                // client.Connect(hostName, portNum);
 
-                System.Net.Sockets.NetworkStream ns = client.GetStream();
-                bytesRead = ns.Read(bytes, 0, bytes.Length);
-                client.Close();
-                break;
+                // 异步连接服务器
+                // client.BeginConnect(hostName, Convert.ToInt32(portNum), new AsyncCallback(ConnectCallback),client);
+                var connectResult = client.BeginConnect(hostName, portNum, null, null);
+                var connectOK = connectResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3));
+                if (!connectOK)
+                {
+                    client.Close();
+                    break;
+                }
+                else
+                {
+                    System.Net.Sockets.NetworkStream ns = client.GetStream();
+
+
+
+                    // 同步读取
+                    //if (ns.CanRead)
+                    //{
+                    //    bytesRead = ns.Read(bytes, 0, bytes.Length);
+                    //    client.Close();
+                    //    ns.Close();
+                    //    break;
+                    //}
+                    //else
+                    //{
+                    //    client.Close();
+                    //    ns.Close();
+                    //    Debug.Log("网络错误！");
+                    //    break;
+                    //}
+
+                    // 异步读取
+                    byte[] result = new byte[client.Available];
+                    try
+                    {
+                        ns.BeginRead(result, 0, result.Length, new AsyncCallback(ReadCallback), ns);
+                    }
+                    catch { }
+                    string strRespnse = Encoding.ASCII.GetString(result).Trim();
+                }
+
+                // client.EndConnect(connectResult);
+                ConnectCallback(connectResult);
             }
             catch (System.Exception)
             {
-                Debug.Log("网络错误！");
+                Debug.Log("获取错误！");
             }
         }
+
+
+
+    }
+
+    private void ReadCallback(IAsyncResult ar)
+    {
+        //
+
         char[] sp = new char[1];
         sp[0] = ' ';
         System.DateTime dt = new DateTime();
@@ -380,6 +432,24 @@ IEnumerator NetworkTimeControlIE()
         Debug.Log("得到本地时间:" + dt);
         return dt;
     }
+
+    private void ConnectCallback(IAsyncResult ar)
+    {
+        TcpClient t = (TcpClient)ar.AsyncState;
+        try
+        {
+            if (t.Connected)
+            {
+                t.EndConnect(ar);//函数运行到这里就说明连接成功
+            }
+            else
+            {
+            }
+        }
+        catch 
+        { }
+    }
+
 
 }
 
