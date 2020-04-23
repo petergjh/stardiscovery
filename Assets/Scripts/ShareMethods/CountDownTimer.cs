@@ -28,6 +28,10 @@ public class CountDownTimer : MonoBehaviour
     public Text countdown4text;
     private DateTime dt;
 
+    public string serverTime=null;
+    private DateTime theNetTime;
+    private const string url = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
+    private string[] urls = url.Split(new char[] { ';' });
     void Start()
     {
         // UI倒计时显示的格式
@@ -37,10 +41,20 @@ public class CountDownTimer : MonoBehaviour
         countdown4text.text = string.Format("{0:00}:{1:00}:{2:00}", (int)totaltime4/60/60, ((int)totaltime4/60%60), ((int)totaltime4%60));
 
         Debug.Log("开始倒计时迭代器协程");
-        //StartCoroutine(CountDown());
-        //StartCoroutine( LocalTimeControlIE());
+        StartCoroutine(CountDown());
+        StartCoroutine( LocalTimeControlIE());
+        //StartCoroutine(NetStatusHeartBeat());
         StartCoroutine( NetworkTimeControlIE());
     }
+    //IEnumerator NetStatusHeartBeat()
+    //{
+    //    while (true)
+    //    {
+    //        CheckNetStatus(urls);
+    //        yield return new WaitForSeconds(3.0f);
+    //    }
+
+    //}
 
     // 实现倒计时方法一：用IEnumerator协程迭代器
     IEnumerator CountDown()
@@ -69,31 +83,31 @@ public class CountDownTimer : MonoBehaviour
     }
 
 
-    // 实现倒计时方法二：采用Update方法
-    // Update is called once per frame
-    //void Update()
-    //{
-        //Debug.Log("开始Update倒计时");
-        
-        //    int M = (int)(totaltime2 / 60);
-        //    float S = totaltime2 % 60;
-        //    if (totaltime2 > 0)
-        //    {
-        //        intervaletime -= Time.deltaTime;
-        //        if (intervaletime <= 0)
-        //        {
-        //            intervaletime += 1;
-        //            totaltime2--;
-        //            countdown2text.text = string.Format("{0:00}:{1:00}", M, S);
+    //实现倒计时方法二：采用Update方法
+    //Update is called once per frame
+    void Update()
+    {
+        Debug.Log("开始Update倒计时");
 
-        //        }
-        //    }
-        //    if (totaltime2 <= 0)
-        //    {
-        //        totaltime2 = 20;
-        //    }
-        
-    //}
+        int M = (int)(totaltime2 / 60);
+        float S = totaltime2 % 60;
+        if (totaltime2 > 0)
+        {
+            intervaletime -= Time.deltaTime;
+            if (intervaletime <= 0)
+            {
+                intervaletime += 1;
+                totaltime2--;
+                countdown2text.text = string.Format("{0:00}:{1:00}", M, S);
+
+            }
+        }
+        if (totaltime2 <= 0)
+        {
+            totaltime2 = 20;
+        }
+
+    }
 
 
     // 获取本地操作系统的时间来倒计时
@@ -166,44 +180,51 @@ IEnumerator NetworkTimeControlIE()
         int nM = 00;
         int nS = 00;
 
-        Debug.Log("开始判断网络连接状态。");
-        string url = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
-        string[] urls = url.Split(new char[] { ';' });
-        //if (CheckServeStatus(urls) )
-        //if (CheckServeStatus(urls)==true )
-        //{
 
-            Debug.Log(" 侦测到网络连接正常，开始获取网络时间");
-            DateTime theNetTime = DataStandardTime();
+        // if (serverTime == null)
+        //if (CheckServeStatus(urls) )
+        Debug.Log("开始判断网络连接状态。");
+        if (CheckNetStatus(urls) == true)
+        {
+            yield return StartCoroutine(RequestNetworkTime());
+
+            Debug.Log(" 获取时间");
+
+            DataStandardTime();
             nH = (int)theNetTime.Hour;
             nM = (int)theNetTime.Minute;
             nS = (int)theNetTime.Second;
             totaltime4 = 86400 - ((nH * 60 * 60) + (nM * 60) + nS);
-        //}
-        //else
-        //{
-        //    Debug.Log(" 侦测到网络连接异常，时间设置为10秒");
-        //    totaltime4 =10;
-        //}
+            //}
+            //else
+            //{
+            //    Debug.Log(" 侦测到网络连接异常，时间设置为10秒");
+            //    totaltime4 =10;
+            //}
 
 
-        while (totaltime4>=1)
-        {
-            Debug.Log("开始倒计时");
-            int H = (int)totaltime4 / 60 / 60;
-            int M = (int)totaltime4 / 60 % 60;
-            int S = (int)totaltime4 % 60;
-            countdown4text.text = "网络时间倒计时\n" + string.Format("{0:00}:{1:00}:{2:00}", H, M, S);
-            yield return new WaitForSeconds(1.0f);
-            // 时间减去一秒
-            totaltime4--;
-
-            // 计时器复位重新开始计时
-            if (totaltime4 < 1)
+            while (totaltime4 >= 1)
             {
-                totaltime4 = 86400-((nH * 60 * 60) + (nM*60) + nS);
-            }
+                Debug.Log("开始倒计时");
+                int H = (int)totaltime4 / 60 / 60;
+                int M = (int)totaltime4 / 60 % 60;
+                int S = (int)totaltime4 % 60;
+                countdown4text.text = "网络时间倒计时\n" + string.Format("{0:00}:{1:00}:{2:00}", H, M, S);
+                yield return new WaitForSeconds(1.0f);
+                // 时间减去一秒
+                totaltime4--;
 
+                // 计时器复位重新开始计时
+                if (totaltime4 < 1)
+                {
+                    totaltime4 = 86400 - ((nH * 60 * 60) + (nM * 60) + nS);
+                }
+
+            }
+        }
+        else
+        {
+            yield break;
         }
     }
 
@@ -239,32 +260,28 @@ IEnumerator NetworkTimeControlIE()
     /// <summary>
     /// 检测网络连接状态
     /// </summary>
-    /// <param name="urls"></param>
+    /// <param name="serverUrls"></param>
     //public static void CheckServeStatus(string[] urls)
-    public bool CheckServeStatus(string[] urls)
+    public bool CheckNetStatus(string[] serverUrls)
     {
 
-        int errCount = 0;//ping时连接失败个数
+        int errCounts = 0;//ping时连接失败个数
 
         //if (!LocalConnectionStatus())
         //{
         //    Console.WriteLine("网络异常~无连接");
         //}
-        if (!MyPing(urls, out errCount))
+        if (!MyPing(serverUrls, out errCounts))
         {
-            if ((double)errCount / urls.Length >= 0.3)
+            if ((double)errCounts / serverUrls.Length >= 0.3)
             {
                 Debug.Log("网络连接异常");
                 return false;
                 //Console.WriteLine("网络异常~连接多次无响应");
             }
-            //else
-            //{
-             //   Console.WriteLine("网络不稳定");
-            //}
             else
             {
-                Debug.Log("网络连接正常");
+                Debug.Log("网络在颤抖");
                 return true;
             }
         }
@@ -284,7 +301,7 @@ IEnumerator NetworkTimeControlIE()
     /// <returns></returns>
     public static bool MyPing(string[] urls, out int errorCount)
     {
-        bool isconnected = true;
+        bool isPingSuccess = true;
         System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
         errorCount = 0;
         try
@@ -295,24 +312,34 @@ IEnumerator NetworkTimeControlIE()
                 pr = ping.Send(urls[i]);
                 if (pr.Status != IPStatus.Success)
                 {
-                    isconnected = false;
+                    isPingSuccess = false;
                     errorCount++;
+                    Debug.LogFormat("目标服务器{0}不可达,错误计数errorCount={1}", urls[i], errorCount);
                 }
-                Console.WriteLine("Ping " + urls[i] + "    " + pr.Status.ToString());
+                // Console.WriteLine("Ping " + urls[i] + "    " + pr.Status.ToString());
+                Debug.Log("Ping " + urls[i] + "    " + pr.Status.ToString());
             }
         }
         catch
         {
-            isconnected = false;
+            isPingSuccess = false;
             errorCount = urls.Length;
         }
-        //if (errorCount > 0 && errorCount < 3)
-        //  isconn = true;
-        return isconnected;
+        //if (errorCount >= 0 && errorCount < 3)
+        // isPingSuccess = true;
+        Debug.Log("ping的状态："+isPingSuccess);
+        return isPingSuccess;
     }
 
-    //public static DateTime DataStandardTime()//使用时，将static 关键字删除，在其它位置方可使用
-    public DateTime DataStandardTime()//使用时，将static 关键字删除，在其它位置方可使用
+  
+
+    //IEnumerator GetNetworkTime()
+    //{
+    //    yield return null;
+    //    RequestNetworkTime();
+    //}
+    // 请求网络时间
+    IEnumerator RequestNetworkTime()
     {//返回国际标准时间
      //只使用的TimerServer的IP地址，未使用域名
         string[,] TimerServer = new string[14, 2];
@@ -363,68 +390,70 @@ IEnumerator NetworkTimeControlIE()
             Debug.Log("开始请求远端服务器 hostName:" + hostName);
             //try
             //{
-                // 同步连接服务器
-                // client.Connect(hostName, portNum);
+            // 同步连接服务器
+            // client.Connect(hostName, portNum);
 
-                // 异步连接服务器
-                // client.BeginConnect(hostName, Convert.ToInt32(portNum), new AsyncCallback(ConnectCallback),client);
-                Debug.Log("开始异步连接服务器");
-                var connectResult = client.BeginConnect(hostName, portNum, null, null);
-                var connectOK = connectResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
-                Debug.Log("连接服务器状态："+connectOK);
+            // 异步连接服务器
+            // client.BeginConnect(hostName, Convert.ToInt32(portNum), new AsyncCallback(ConnectCallback),client);
+            Debug.Log("开始异步连接服务器");
+            var connectResult = client.BeginConnect(hostName, portNum, null, null);
+            var connectOK = connectResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
+            Debug.Log("连接服务器状态：" + connectOK);
 
-            if(client.Connected)
-            { 
+            if (client.Connected)
+            {
 
-                    System.Net.Sockets.NetworkStream ns = client.GetStream();
-                    Debug.Log("开始获取网络字节流："+ns);
+                yield return client.GetStream();
+                System.Net.Sockets.NetworkStream ns = client.GetStream();
+                Debug.Log("开始获取网络字节流：" + ns);
 
-                    //同步读取
-                    if (ns.CanRead)
-                    {
-                        Debug.Log("开始同步接收远程服务器数据");
-                        bytesRead = ns.Read(bytes, 0, bytes.Length);
-                        client.Close();
-                        ns.Close();
-                        MyConnectCallback(connectResult);
-                        break;
-                    }
-                    else
-                    {
-                        client.Close();
-                        ns.Close();
-                        Debug.Log("网络错误！");
-                        MyConnectCallback(connectResult);
-                        break;
-                    }
+                //同步读取
+                if (ns.CanRead)
+                {
+                    Debug.Log("开始同步接收远程服务器数据");
+                    bytesRead = ns.Read(bytes, 0, bytes.Length);
+                    client.Close();
+                    ns.Close();
+                    MyConnectCallback(connectResult);
+                    break;
+                }
+                else
+                {
+                    client.Close();
+                    ns.Close();
+                    Debug.Log("网络错误！");
+                    MyConnectCallback(connectResult);
+                    break;
+                }
 
-                    //// 异步读取
-                    //try
-                    //{
+                //// 异步读取
+                //try
+                //{
 
-                    //    byte[] result = new byte[client.Available];
-                    //    ns.BeginRead(result, 0, result.Length, new AsyncCallback(MyReadCallback), ns);
-                    //    Debug.Log("开始异步接收网络数据："+ns);
-                    //    strResponse = Encoding.ASCII.GetString(result).Trim();
-                    //    Debug.Log("得到异步接收的网络数据 strResponse ntp time:" +strResponse);
-                    //    str2 = strResponse;
+                //    byte[] result = new byte[client.Available];
+                //    ns.BeginRead(result, 0, result.Length, new AsyncCallback(MyReadCallback), ns);
+                //    Debug.Log("开始异步接收网络数据："+ns);
+                //    strResponse = Encoding.ASCII.GetString(result).Trim();
+                //    Debug.Log("得到异步接收的网络数据 strResponse ntp time:" +strResponse);
+                //    str2 = strResponse;
 
-                    //    client.Close();
-                    //    break;
-                    //}
-                    //catch 
-                    //{ 
-                    //    Debug.Log("网络错误！");
+                //    client.Close();
+                //    break;
+                //}
+                //catch 
+                //{ 
+                //    Debug.Log("网络错误！");
 
-                    //}
+                //}
 
             }
             else
             {
+
                 Debug.Log("网络未连接");
                 client.Close();
                 MyConnectCallback(connectResult);
-                break;
+                yield break;
             }
             // client.EndConnect(connectResult);
             //}
@@ -433,21 +462,28 @@ IEnumerator NetworkTimeControlIE()
             //Debug.Log("获取错误！");
             //}
         }
-
         str2 = System.Text.Encoding.ASCII.GetString(bytes, 0, bytesRead);
         Debug.Log("得到 ntp time:" + str2);
+        serverTime = str2;
+        //return serverTime;
+    }
 
-        if (str2 != null)
+    // 转换得到网络标准时间
+    //public static DateTime DataStandardTime()//使用时，将static 关键字删除，在其它位置方可使用
+    public DateTime DataStandardTime()
+    {
+
+        if (serverTime != null)
         {
             char[] sp = new char[1];
             sp[0] = ' ';
             System.DateTime dt = new DateTime();
             // string str1;
             // str2 = str2.Replace("PDT", "");
-    
+
             string[] s;
             //s = str1.Split(sp);
-            s = str2.Split(sp);
+            s = serverTime.Split(sp);
             // "58961 20-04-22 07:22:32 50 0 0 900.6 UTC(NIST) *"
             dt = System.DateTime.Parse(s[1] + " " + s[2]);//得到标准时间
             //Debug.WriteLine("get:" + dt.ToShortTimeString());
@@ -455,18 +491,19 @@ IEnumerator NetworkTimeControlIE()
             //dt=dt.AddHours (8);
             dt = dt.ToLocalTime();
             Debug.Log("得到本地时间:" + dt);
-            return dt;
+            theNetTime = dt;
+            return theNetTime;
         }
         else
         {
             dt = System.DateTime.Parse("20200000000000");
             Debug.Log(" 获取网络时间失败，已经获取到本机系统时间.");
-            return dt;
+            theNetTime = dt;
+            return theNetTime;
         }
 
-    
-    }
 
+    }
     private static void MyReadCallback(IAsyncResult iar)
     {
         //
