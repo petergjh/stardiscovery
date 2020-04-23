@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UIFrame;
-using DemoProject;
 using UnityEngine.UI;
 using System;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.IO;
 using System.Text;
-using Unity.UIWidgets.material;
+using System.Threading;
 
 public class CountDownTimer : MonoBehaviour
 {
@@ -43,18 +41,87 @@ public class CountDownTimer : MonoBehaviour
         Debug.Log("开始倒计时迭代器协程");
         StartCoroutine(CountDown());
         StartCoroutine( LocalTimeControlIE());
-        //StartCoroutine(NetStatusHeartBeat());
-        StartCoroutine( NetworkTimeControlIE());
+        StartCoroutine(NetStatusHeartBeat());
+        //StartCoroutine( NetworkTimeControlIE());
     }
-    //IEnumerator NetStatusHeartBeat()
+
+    //多线程监听;
+    //private Thread thread;
+    //private void NetStatusHeartBeatLoop(object sender, EventArgs e)
+    //{
+    //    if (thread == null)
+    //    {
+    //        thread = new Thread(new ThreadStart(Loop));
+    //        thread.Start();
+    //        MessageBox.Show("成功启动轮检。");
+    //    }
+    //    else
+    //    {
+    //        MessageBox.Show("启动轮检失败，轮检已开始。");
+    //    }
+    //}
+    //private void Loop()
     //{
     //    while (true)
     //    {
-    //        CheckNetStatus(urls);
-    //        yield return new WaitForSeconds(3.0f);
+    //        if (CheckIfFtpFileExists() == true)
+    //        {
+    //            Tsystem();
+    //        }
     //    }
-
+    //    Thread.Sleep(5000);
     //}
+
+    /// <summary>
+    /// 监听网络状态的心跳ping包
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator NetStatusHeartBeat()
+    {
+        // yield return new WaitForSeconds(3f);
+        yield return null;
+        System.Timers.Timer t25yi = new System.Timers.Timer();//实例化Timer类，设置时间间隔为100毫秒
+        t25yi.Elapsed += new System.Timers.ElapsedEventHandler(CheckNet);//当到达时间的时候执行MethodTimer2事件 
+        Debug.Log("定时检查网络状态心跳开始");
+        t25yi.Interval = 3000;
+        t25yi.AutoReset = true;//false是执行一次，true是一直执行
+        t25yi.Enabled = true;//设置是否执行System.Timers.Timer.Elapsed事件 
+        //}
+    }
+
+
+    private void CheckNet(object sender, EventArgs e)
+    {
+        // 上一次心跳时的网络状态
+        bool lastNetStatus = false;
+        Debug.Log("上次的网络状态是：" + lastNetStatus);
+
+        //while (true)
+        //{
+
+        bool isConnectedNow = CheckNetStatus(urls);
+        if (isConnectedNow && lastNetStatus == false)
+        {
+            //开始在线倒计时
+            StartCoroutine(NetworkTimeControlIE());
+            lastNetStatus = true;
+        }
+
+        else if (!isConnectedNow && lastNetStatus == true)
+        {
+
+            // 开始离线正计时
+            // StartCoroutine(LocalTimeControlIE())
+            lastNetStatus = false;
+        }
+
+        else
+        {
+            // 一直在线，或一直离线
+
+        }
+
+    }
 
     // 实现倒计时方法一：用IEnumerator协程迭代器
     IEnumerator CountDown()
@@ -181,15 +248,13 @@ IEnumerator NetworkTimeControlIE()
         int nS = 00;
 
 
+        yield return StartCoroutine(RequestNetworkTime());
         // if (serverTime == null)
         //if (CheckServeStatus(urls) )
         Debug.Log("开始判断网络连接状态。");
         if (CheckNetStatus(urls) == true)
         {
-            yield return StartCoroutine(RequestNetworkTime());
-
             Debug.Log(" 获取时间");
-
             DataStandardTime();
             nH = (int)theNetTime.Hour;
             nM = (int)theNetTime.Minute;
