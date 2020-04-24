@@ -41,7 +41,8 @@ public class CountDownTimer : MonoBehaviour
         Debug.Log("开始倒计时迭代器协程");
         StartCoroutine(CountDown());
         StartCoroutine( LocalTimeControlIE());
-        StartCoroutine(NetStatusHeartBeat());
+        //StartCoroutine(NetStatusHeartBeat());
+        NetStatusHeartBeat();
         //StartCoroutine( NetworkTimeControlIE());
     }
 
@@ -72,18 +73,21 @@ public class CountDownTimer : MonoBehaviour
     //    Thread.Sleep(5000);
     //}
 
+    // 上一次心跳时的网络状态
+    public bool lastNetStatus = false;
     /// <summary>
     /// 监听网络状态的心跳ping包
     /// </summary>
     /// <returns></returns>
-    IEnumerator NetStatusHeartBeat()
+    //IEnumerator NetStatusHeartBeat()
+    private void NetStatusHeartBeat()
     {
         // yield return new WaitForSeconds(3f);
-        yield return null;
-        System.Timers.Timer t25yi = new System.Timers.Timer();//实例化Timer类，设置时间间隔为100毫秒
+        // yield return null;
+        //Timer类是多线程
+        System.Timers.Timer t25yi = new System.Timers.Timer(3000);//实例化Timer类，设置时间间隔为100毫秒
         t25yi.Elapsed += new System.Timers.ElapsedEventHandler(CheckNet);//当到达时间的时候执行MethodTimer2事件 
         Debug.Log("定时检查网络状态心跳开始");
-        t25yi.Interval = 3000;
         t25yi.AutoReset = true;//false是执行一次，true是一直执行
         t25yi.Enabled = true;//设置是否执行System.Timers.Timer.Elapsed事件 
         //}
@@ -92,22 +96,22 @@ public class CountDownTimer : MonoBehaviour
 
     private void CheckNet(object sender, EventArgs e)
     {
-        // 上一次心跳时的网络状态
-        bool lastNetStatus = false;
-        Debug.Log("上次的网络状态是：" + lastNetStatus);
 
+
+        Debug.Log("上次的网络状态是：" + lastNetStatus);
         //while (true)
         //{
 
         bool isConnectedNow = CheckNetStatus(urls);
-        if (isConnectedNow && lastNetStatus == false)
+        if (isConnectedNow==true && (lastNetStatus == false))
         {
-            //开始在线倒计时
+            Debug.Log("开始在线倒计时协程");
             StartCoroutine(NetworkTimeControlIE());
             lastNetStatus = true;
+            Debug.Log("记录本次网络状态");
         }
 
-        else if (!isConnectedNow && lastNetStatus == true)
+        else if (isConnectedNow==false && (lastNetStatus == true))
         {
 
             // 开始离线正计时
@@ -118,7 +122,7 @@ public class CountDownTimer : MonoBehaviour
         else
         {
             // 一直在线，或一直离线
-
+            Debug.Log("do nothing if always online or offline.");
         }
 
     }
@@ -248,7 +252,9 @@ IEnumerator NetworkTimeControlIE()
         int nS = 00;
 
 
-        yield return StartCoroutine(RequestNetworkTime());
+        Debug.Log("开始请求网络时间");
+        //yield return StartCoroutine(RequestNetworkTime());
+        RequestNetworkTime();
         // if (serverTime == null)
         //if (CheckServeStatus(urls) )
         Debug.Log("开始判断网络连接状态。");
@@ -404,7 +410,8 @@ IEnumerator NetworkTimeControlIE()
     //    RequestNetworkTime();
     //}
     // 请求网络时间
-    IEnumerator RequestNetworkTime()
+    //IEnumerator RequestNetworkTime()
+    private void RequestNetworkTime()
     {//返回国际标准时间
      //只使用的TimerServer的IP地址，未使用域名
         string[,] TimerServer = new string[14, 2];
@@ -468,7 +475,7 @@ IEnumerator NetworkTimeControlIE()
             if (client.Connected)
             {
 
-                yield return client.GetStream();
+                //yield return client.GetStream();
                 System.Net.Sockets.NetworkStream ns = client.GetStream();
                 Debug.Log("开始获取网络字节流：" + ns);
 
@@ -518,7 +525,8 @@ IEnumerator NetworkTimeControlIE()
                 Debug.Log("网络未连接");
                 client.Close();
                 MyConnectCallback(connectResult);
-                yield break;
+                //yield break;
+                break;
             }
             // client.EndConnect(connectResult);
             //}
