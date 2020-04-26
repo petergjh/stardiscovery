@@ -8,7 +8,8 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
-public class CountDownTimer : MonoBehaviour
+//public class GetNetStandardTime : MonoBehaviour
+public class GetNetStandardTime : MonoBehaviour
 {
     // 剩余总时间
     private int totaltime1 = 5;
@@ -26,7 +27,7 @@ public class CountDownTimer : MonoBehaviour
     private DateTime dt;
 
     public string serverTime=null;
-    private DateTime theNetTime;
+    public DateTime theNetTime = default;
     private const string url = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
     private string[] urls = url.Split(new char[] { ';' });
     void Start()
@@ -38,10 +39,10 @@ public class CountDownTimer : MonoBehaviour
         countdown4text.text = string.Format("{0:00}:{1:00}:{2:00}", (int)totaltime4/60/60, ((int)totaltime4/60%60), ((int)totaltime4%60));
 
         Debug.Log("开始倒计时迭代器协程");
-        StartCoroutine(CountDown());
+        //StartCoroutine(CountDown());
         StartCoroutine( LocalTimeControlIE());
         //StartCoroutine(NetStatusHeartBeat());
-        NetStatusHeartBeat();
+        //NetStatusHeartBeat();
         //StartCoroutine( NetworkTimeControlIE());
     }
 
@@ -93,7 +94,7 @@ public class CountDownTimer : MonoBehaviour
     }
 
 
-    private void CheckNet(object sender, EventArgs e)
+    public void CheckNet(object sender, EventArgs e)
     {
 
 
@@ -105,7 +106,7 @@ public class CountDownTimer : MonoBehaviour
         if (isConnectedNow==true && (lastNetStatus == false))
         {
             Debug.Log("开始在线倒计时协程");
-            StartCoroutine(NetworkTimeControlIE());
+            //StartCoroutine(NetworkTimeControlIE());
             lastNetStatus = true;
             Debug.Log("记录本次网络状态");
         }
@@ -332,7 +333,7 @@ IEnumerator NetworkTimeControlIE()
     /// </summary>
     /// <param name="serverUrls"></param>
     //public static void CheckServeStatus(string[] urls)
-    public bool CheckNetStatus(string[] serverUrls)
+    public static bool CheckNetStatus(string[] serverUrls)
     {
 
         int errCounts = 0;//ping时连接失败个数
@@ -410,7 +411,7 @@ IEnumerator NetworkTimeControlIE()
     //}
     // 请求网络时间
     //IEnumerator RequestNetworkTime()
-    private void RequestNetworkTime()
+    public void RequestNetworkTime()
     {//返回国际标准时间
      //只使用的TimerServer的IP地址，未使用域名
         string[,] TimerServer = new string[14, 2];
@@ -562,7 +563,7 @@ IEnumerator NetworkTimeControlIE()
             Debug.Log("得到标准时间:" + dt.ToShortTimeString());
             //dt=dt.AddHours (8);
             dt = dt.ToLocalTime();
-            Debug.Log("得到本地时间:" + dt);
+            Debug.Log("转换为本地时间:" + dt);
             theNetTime = dt;
             return theNetTime;
         }

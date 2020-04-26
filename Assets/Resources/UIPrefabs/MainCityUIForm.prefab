@@ -393,7 +393,7 @@ GameObject:
   - component: {fileID: 8032191901890097983}
   - component: {fileID: 613562664606089188}
   - component: {fileID: 3495242135642284368}
-  - component: {fileID: 1705441572554923016}
+  - component: {fileID: 4076748407054156730}
   m_Layer: 5
   m_Name: PanelCountDown
   m_TagString: Untagged
@@ -459,7 +459,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &1705441572554923016
+--- !u!114 &4076748407054156730
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -468,13 +468,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2579326047467642022}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 882c34fad93a05e4a8a94eff8b12afe6, type: 3}
+  m_Script: {fileID: 11500000, guid: df8e6b807213f4140bd9133e1e769a07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countdown1text: {fileID: 672514606}
-  countdown2text: {fileID: 3436943412027809946}
-  countdown3text: {fileID: 2023779091}
   countdown4text: {fileID: 7435838482152140347}
+  countdown1text: {fileID: 672514606}
+  countdown3text: {fileID: 2023779091}
 --- !u!1 &2629166583659953197
 GameObject:
   m_ObjectHideFlags: 0
