@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 
 //public class GetNetStandardTime : MonoBehaviour
-public class GetNetStandardTime : MonoBehaviour
+public class GetNetStandardTime 
 {
     // 剩余总时间
     private int totaltime1 = 5;
@@ -26,7 +26,7 @@ public class GetNetStandardTime : MonoBehaviour
     public Text countdown4text;
     private DateTime dt;
 
-    public string serverTime=null;
+    public static string serverTime=null;
     public DateTime theNetTime = default;
     private const string url = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
     private string[] urls = url.Split(new char[] { ';' });
@@ -40,7 +40,7 @@ public class GetNetStandardTime : MonoBehaviour
 
         Debug.Log("开始倒计时迭代器协程");
         //StartCoroutine(CountDown());
-        StartCoroutine( LocalTimeControlIE());
+        //StartCoroutine( LocalTimeControlIE());
         //StartCoroutine(NetStatusHeartBeat());
         //NetStatusHeartBeat();
         //StartCoroutine( NetworkTimeControlIE());
@@ -73,59 +73,59 @@ public class GetNetStandardTime : MonoBehaviour
     //    Thread.Sleep(5000);
     //}
 
-    // 上一次心跳时的网络状态
-    public bool lastNetStatus = false;
-    /// <summary>
-    /// 监听网络状态的心跳ping包
-    /// </summary>
-    /// <returns></returns>
-    //IEnumerator NetStatusHeartBeat()
-    private void NetStatusHeartBeat()
-    {
-        // yield return new WaitForSeconds(3f);
-        // yield return null;
-        //Timer类是多线程
-        System.Timers.Timer t25yi = new System.Timers.Timer(3000);//实例化Timer类，设置时间间隔为100毫秒
-        t25yi.Elapsed += new System.Timers.ElapsedEventHandler(CheckNet);//当到达时间的时候执行MethodTimer2事件 
-        Debug.Log("定时检查网络状态心跳开始");
-        t25yi.AutoReset = true;//false是执行一次，true是一直执行
-        t25yi.Enabled = true;//设置是否执行System.Timers.Timer.Elapsed事件 
-        //}
-    }
+    //// 上一次心跳时的网络状态
+    //public bool lastNetStatus = false;
+    ///// <summary>
+    ///// 监听网络状态的心跳ping包
+    ///// </summary>
+    ///// <returns></returns>
+    ////IEnumerator NetStatusHeartBeat()
+    //private void NetStatusHeartBeat()
+    //{
+    //    // yield return new WaitForSeconds(3f);
+    //    // yield return null;
+    //    //Timer类是多线程
+    //    System.Timers.Timer t25yi = new System.Timers.Timer(3000);//实例化Timer类，设置时间间隔为100毫秒
+    //    t25yi.Elapsed += new System.Timers.ElapsedEventHandler(CheckNet);//当到达时间的时候执行MethodTimer2事件 
+    //    Debug.Log("定时检查网络状态心跳开始");
+    //    t25yi.AutoReset = true;//false是执行一次，true是一直执行
+    //    t25yi.Enabled = true;//设置是否执行System.Timers.Timer.Elapsed事件 
+    //    //}
+    //}
 
 
-    public void CheckNet(object sender, EventArgs e)
-    {
+    //public void CheckNet(object sender, EventArgs e)
+    //{
 
 
-        Debug.Log("上次的网络状态是：" + lastNetStatus);
-        //while (true)
-        //{
+    //    Debug.Log("上次的网络状态是：" + lastNetStatus);
+    //    //while (true)
+    //    //{
 
-        bool isConnectedNow = CheckNetStatus(urls);
-        if (isConnectedNow==true && (lastNetStatus == false))
-        {
-            Debug.Log("开始在线倒计时协程");
-            //StartCoroutine(NetworkTimeControlIE());
-            lastNetStatus = true;
-            Debug.Log("记录本次网络状态");
-        }
+    //    bool isConnectedNow = CheckNetStatus(urls);
+    //    if (isConnectedNow==true && (lastNetStatus == false))
+    //    {
+    //        Debug.Log("开始在线倒计时协程");
+    //        //StartCoroutine(NetworkTimeControlIE());
+    //        lastNetStatus = true;
+    //        Debug.Log("记录本次网络状态");
+    //    }
 
-        else if (isConnectedNow==false && (lastNetStatus == true))
-        {
+    //    else if (isConnectedNow==false && (lastNetStatus == true))
+    //    {
 
-            // 开始离线正计时
-            // StartCoroutine(LocalTimeControlIE())
-            lastNetStatus = false;
-        }
+    //        // 开始离线正计时
+    //        // StartCoroutine(LocalTimeControlIE())
+    //        lastNetStatus = false;
+    //    }
 
-        else
-        {
-            // 一直在线，或一直离线
-            Debug.Log("do nothing if always online or offline.");
-        }
+    //    else
+    //    {
+    //        // 一直在线，或一直离线
+    //        Debug.Log("do nothing if always online or offline.");
+    //    }
 
-    }
+    //}
 
     // 实现倒计时方法一：用IEnumerator协程迭代器
     IEnumerator CountDown()
@@ -599,7 +599,7 @@ IEnumerator NetworkTimeControlIE()
 
     }
 
-    private void MyConnectCallback(IAsyncResult ar)
+    public static void MyConnectCallback(IAsyncResult ar)
     {
         TcpClient t = (TcpClient)ar.AsyncState;
         try

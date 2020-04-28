@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +16,7 @@ public class TimerScriber : MonoBehaviour
     public Text countdown3text;
     private static readonly NetStatusPublisher nsp = new NetStatusPublisher();
 
-    public void TimerCount(object sender, NetStatusPublisher.NetChangedEventArgs e)
+    public string TimerCount(object sender, NetStatusPublisher.NetChangedEventArgs e)
     {
 
         NetStatusPublisher netStatusPublisher = (NetStatusPublisher)sender;
@@ -27,7 +26,10 @@ public class TimerScriber : MonoBehaviour
         // 触发事件，开始计时
         //StartCoroutine(TimerProcess());
         TimerProcess();
+        return null;
     }
+
+
 
     // 订阅事件（链）
     void ScribeMethod()
@@ -41,8 +43,13 @@ public class TimerScriber : MonoBehaviour
     }
 
     // Start is called before the first frame update
+    private void CheckNet()
+    {
+        nsp.CheckNet();
+    }
     void Start()
     {
+        // 启动订阅事件方法
         ScribeMethod();
 
         countdown1text.text = string.Format("{0:00}:{1:00}", (int)totaltime1 / 60, (float)totaltime1 % 60);
@@ -51,9 +58,25 @@ public class TimerScriber : MonoBehaviour
         // 触发事件，启动协程轮询网络状态
         //StartCoroutine( CountDown());
         //StartCoroutine( LocalTimeControlIE());
-        StartCoroutine(nsp.CheckNet());
+
+        // 启动事件发布协程
+        //StartCoroutine(nsp.CheckNet());
+        //nsp.CheckNetAsync();
+        //InvokeRepeating("TimerProcess",1,3);
     }
 
+    //private void RepeatTimerCount()
+    //{
+    //}
+
+    //private async void TimerProcessAsync()
+    //{
+    //    await Task.Run(() =>
+    //    {
+    //        TimerProcess();
+    //    }
+    //    );
+    //}
     //IEnumerator TimerProcess()
     private void TimerProcess()
     {
@@ -231,7 +254,7 @@ public class TimerScriber : MonoBehaviour
                     int M = (int)totaltime4 / 60 % 60;
                     int S = (int)totaltime4 % 60;
                     countdown4text.text = "网络时间倒计时\n" + string.Format("{0:00}:{1:00}:{2:00}", H, M, S);
-                    yield return new WaitForSeconds(1f);
+                    yield return new WaitForSeconds(1.0f);
                     // 时间减去一秒
                     totaltime4--;
 
