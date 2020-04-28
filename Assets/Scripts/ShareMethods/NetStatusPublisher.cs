@@ -42,6 +42,8 @@ public class NetStatusPublisher
         {
             Debug.Log(" 发布事件消息，通知订阅者对接收到的消息做后续方法的操作");
             NetChanged(this, e);  
+            
+            // 委托事件异步非阻塞
             //Delegate[] delegAry = NetChanged.GetInvocationList();
             //foreach (NetChangedEventHandler handler in delegAry)
             //{
@@ -50,44 +52,41 @@ public class NetStatusPublisher
         }
     }
 
-    public void CallBack(IAsyncResult obj)
-    {
-        NetChangedEventHandler handler = (NetChangedEventHandler)obj.AsyncState;
-        string res = handler.EndInvoke(obj);
-        //NetChanged(res);
-
-    }
-
-    //private void Start()
+    //public void CallBack(IAsyncResult obj)
     //{
-    //    InvokeRepeating("CheckNet" ,1,3);
+    //    NetChangedEventHandler handler = (NetChangedEventHandler)obj.AsyncState;
+    //    string res = handler.EndInvoke(obj);
+    //    //NetChanged(res);
 
     //}
 
     // 发布事件消息
+    /// <summary>
+    /// 网络状态监听器心跳
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator CheckNet()
-    //public void CheckNet()
-
-    //public async void CheckNetAsync()
     {
+        // 异步task
         //CancellationTokenSource source = new CancellationTokenSource();
         //Task taskCheckNet = new Task(async () =>
         //{
 
+        // 监听网络状态循环
         while (true)
         {
-            //yield return CheckNetStatus();
-            CheckNetStatusAsync();
+            // 异步检查网络状态
             //bool connectedResult = CheckNetAsync(isConnectedNow).Result;
+            CheckNetStatusAsync();
+
             string netChangedStatusNow = null;
+
             // 1.离线变为在线
             if (isConnectedNow == true && (lastNetStatus == false))
             {
                 lastNetStatus = true;
                 netChangedStatusNow = "DownToUp";
-                //NetChangedEventArgs dtue = new NetChangedEventArgs(netChangedStatusNow);
-                //Debug.Log("监听到事件发生：离线变为在线" + dtue);
-                //OnNetChanged(dtue);
+                Debug.Log("监听到事件发生：离线变为在线" + netChangedStatusNow);
             }
 
             // 2.在线变为离线
@@ -95,10 +94,7 @@ public class NetStatusPublisher
             {
                 lastNetStatus = false;
                 netChangedStatusNow = "UpToDown";
-                //    NetChangedEventArgs utde = new NetChangedEventArgs(netChangedStatusNow);
-                //    Debug.Log("监听到事件发生：在线变为离线");
-                //    startCountLocalTime = System.DateTime.Now;
-                //    OnNetChanged(utde);
+                Debug.Log("监听到事件发生：在线变为离线");
             }
 
             // 3.一开始就是离线启动的游戏
@@ -106,10 +102,7 @@ public class NetStatusPublisher
             {
                 Debug.Log("Always down, start local time count");
                 netChangedStatusNow = "UpToDown";
-                //NetChangedEventArgs utde = new NetChangedEventArgs(netChangedStatusNow);
-                //Debug.Log("监听到事件发生：在线变为离线");
-                //startCountLocalTime = System.DateTime.Now;
-                //OnNetChanged(utde);
+                Debug.Log("监听到事件发生：在线变为离线");
             }
 
             // 4.一直离线或一直在线则不做处理，不发消息
@@ -119,12 +112,14 @@ public class NetStatusPublisher
                 netChangedStatusNow = null;
             }
 
+            // 监听到的事件内容
             NetChangedEventArgs dtue = new NetChangedEventArgs(netChangedStatusNow);
             Debug.Log("监听到事件发生：离线变为在线" + dtue);
+            // 发布事件
             OnNetChanged(dtue);
+
             //等待5秒后进行下一次问询
-            yield return new WaitForSeconds(5f);
-            //yield return null;
+            yield return new WaitForSeconds(9.0f);
             //Thread.Sleep(3000);
         }
         //}
@@ -133,88 +128,6 @@ public class NetStatusPublisher
         //source.CancelAfter(5000);
 
     }
-
-    //public async Task<bool> CheckNetAsync(bool isconnectednow)
-    //{
-
-    //    bool connectedResult = await CheckNetStatusAsync(isconnectednow);
-    //    return connectedResult;
-    //}
-
-
-    //void Start()
-    //{
-    //    // 触发事件，启动协程轮询网络状态
-    //    StartCoroutine( CheckNet());
-    //}
-
-    //// 发布事件消息
-    //public IEnumerator CheckNet()
-
-    ////public async void CheckNetAsync()
-    //{
-    //    //CancellationTokenSource source = new CancellationTokenSource();
-    //    //Task taskCheckNet = new Task(async () =>
-    //    //{
-
-    //        while (true)
-    //        {
-    //            yield return CheckNetStatus();
-    //            //bool connectedResult = await CheckNetStatusAsync(isConnectedNow);
-    //            string netChangedStatusNow = null;
-    //            // 1.离线变为在线
-    //            if (isConnectedNow == true && (lastNetStatus == false))
-    //            {
-    //                lastNetStatus = true;
-    //                netChangedStatusNow = "DownToUp";
-    //                //NetChangedEventArgs dtue = new NetChangedEventArgs(netChangedStatusNow);
-    //                //Debug.Log("监听到事件发生：离线变为在线" + dtue);
-    //                //OnNetChanged(dtue);
-    //            }
-
-    //            // 2.在线变为离线
-    //            else if (isConnectedNow == false && (lastNetStatus == true))
-    //            {
-    //                lastNetStatus = false;
-    //                netChangedStatusNow = "UpToDown";
-    //            //    NetChangedEventArgs utde = new NetChangedEventArgs(netChangedStatusNow);
-    //            //    Debug.Log("监听到事件发生：在线变为离线");
-    //            //    startCountLocalTime = System.DateTime.Now;
-    //            //    OnNetChanged(utde);
-    //            }
-
-    //            // 3.一开始就是离线启动的游戏
-    //            else if (isConnectedNow == false && (lastNetStatus == false) && (startCountLocalTime == default))
-    //            {
-    //                Debug.Log("Always down, start local time count");
-    //                netChangedStatusNow = "UpToDown";
-    //                //NetChangedEventArgs utde = new NetChangedEventArgs(netChangedStatusNow);
-    //                //Debug.Log("监听到事件发生：在线变为离线");
-    //                //startCountLocalTime = System.DateTime.Now;
-    //                //OnNetChanged(utde);
-    //            }
-
-    //            // 4.一直离线或一直在线则不做处理，不发消息
-    //            else
-    //            {
-    //                Debug.Log("Always up or down, nothing to do");
-    //            }
-
-    //            NetChangedEventArgs dtue = new NetChangedEventArgs(netChangedStatusNow);
-    //            Debug.Log("监听到事件发生：离线变为在线" + dtue);
-    //            OnNetChanged(dtue);
-    //            //等待5秒后进行下一次问询
-    //            yield return new WaitForSeconds(1f);
-    //            //Thread.Sleep(3000);
-    //        }
-    //    //}
-    //    //);
-    //    //taskCheckNet.Start();
-    //    //source.CancelAfter(5000);
-
-    //}
-
-
 
     /// <summary>
     /// 检测网络连接状态
@@ -299,8 +212,25 @@ public class NetStatusPublisher
         return isPingSuccess;
     }
 
-
-
-
+ 
+    //// 上一次心跳时的网络状态
+    //public bool lastNetStatus = false;
+    ///// <summary>
+    ///// 监听网络状态的心跳ping包
+    ///// </summary>
+    ///// <returns></returns>
+    ////IEnumerator NetStatusHeartBeat()
+    //private void NetStatusHeartBeat()
+    //{
+    //    // yield return new WaitForSeconds(3f);
+    //    // yield return null;
+    //    //Timer类是多线程
+    //    System.Timers.Timer t25yi = new System.Timers.Timer(3000);//实例化Timer类，设置时间间隔为100毫秒
+    //    t25yi.Elapsed += new System.Timers.ElapsedEventHandler(CheckNet);//当到达时间的时候执行MethodTimer2事件 
+    //    Debug.Log("定时检查网络状态心跳开始");
+    //    t25yi.AutoReset = true;//false是执行一次，true是一直执行
+    //    t25yi.Enabled = true;//设置是否执行System.Timers.Timer.Elapsed事件 
+    //    //}
+    //}
 
 }
