@@ -11,11 +11,11 @@ using UnityEngine;
 /// <summary>
 /// 网络状态发布器
 /// </summary>
-public class NetStatusPublisher : MonoBehaviour 
+public class NetStatusPublisher 
 {
     private bool lastNetStatus = false;
-    private bool isConnectedNow = false;
-    private DateTime startCountLocalTime =default;
+    private static bool isConnectedNow = false;
+    private readonly DateTime startCountLocalTime =default;
     private static bool isPingSuccess;
 
     // 声明委托类
@@ -60,15 +60,15 @@ public class NetStatusPublisher : MonoBehaviour
 
     }
 
-    private void Start()
-    {
-        InvokeRepeating("CheckNet" ,1,3);
+    //private void Start()
+    //{
+    //    InvokeRepeating("CheckNet" ,1,3);
 
-    }
+    //}
 
     // 发布事件消息
-    //public IEnumerator CheckNet()
-    public void CheckNet()
+    public IEnumerator CheckNet()
+    //public void CheckNet()
 
     //public async void CheckNetAsync()
     {
@@ -76,11 +76,11 @@ public class NetStatusPublisher : MonoBehaviour
         //Task taskCheckNet = new Task(async () =>
         //{
 
-        //while (true)
-        //{
+        while (true)
+        {
             //yield return CheckNetStatus();
-            CheckNetStatus();
-            //bool connectedResult = await CheckNetStatusAsync(isConnectedNow);
+            CheckNetStatusAsync();
+            //bool connectedResult = CheckNetAsync(isConnectedNow).Result;
             string netChangedStatusNow = null;
             // 1.离线变为在线
             if (isConnectedNow == true && (lastNetStatus == false))
@@ -123,11 +123,12 @@ public class NetStatusPublisher : MonoBehaviour
 
             NetChangedEventArgs dtue = new NetChangedEventArgs(netChangedStatusNow);
             Debug.Log("监听到事件发生：离线变为在线" + dtue);
-            //等待5秒后进行下一次问询
-            //yield return new WaitForSeconds(3f);
-            //Thread.Sleep(3000);
             OnNetChanged(dtue);
-        //}
+            //等待5秒后进行下一次问询
+            yield return new WaitForSeconds(5f);
+            //yield return null;
+            //Thread.Sleep(3000);
+        }
         //}
         //);
         //taskCheckNet.Start();
@@ -135,6 +136,12 @@ public class NetStatusPublisher : MonoBehaviour
 
     }
 
+    //public async Task<bool> CheckNetAsync(bool isconnectednow)
+    //{
+
+    //    bool connectedResult = await CheckNetStatusAsync(isconnectednow);
+    //    return connectedResult;
+    //}
 
 
     //void Start()
@@ -216,20 +223,21 @@ public class NetStatusPublisher : MonoBehaviour
     /// </summary>
     /// <param name="serverUrls"></param>
     //public static void CheckServeStatus(string[] urls)
-    public bool CheckNetStatus()
+    //public bool CheckNetStatus()
     //public static async Task<bool> CheckNetStatusAsync(bool isConnectedNow)
+    public static async void CheckNetStatusAsync()
     {
         const string netUrls = "www.baidu.com;www.sina.com;www.cnblogs.com;www.google.com;www.163.com;www.csdn.com";
         string[] serverUrls = netUrls.Split(new char[] { ';' });
         int errCounts = 0;//ping时连接失败个数
-        //await Task.Run
-        //    (
-        //        ()=>
-        //        {
-        //            MyPing(serverUrls, out errCounts);
-        //        }
-        //    );
-        MyPing(serverUrls, out errCounts);
+        await Task.Run
+            (
+                () =>
+                {
+                    MyPing(serverUrls, out errCounts);
+                }
+            );
+        //MyPing(serverUrls, out errCounts);
 
         if (!isPingSuccess)
         {
@@ -252,7 +260,7 @@ public class NetStatusPublisher : MonoBehaviour
             //Console.WriteLine("网络正常");
         }
 
-        return isConnectedNow;
+        //return isConnectedNow;
     }
 
     /// <summary>
