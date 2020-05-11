@@ -62,7 +62,7 @@ public class GetNetStandardTime
         {
             hostName = TimerServer[ServerTab[i], 0];
 
-            Debug.Log("开始请求远端服务器 hostName:" + hostName);
+            //Debug.Log("开始请求远端服务器 hostName:" + hostName);
             //try
             //{
             // 同步连接服务器
@@ -70,20 +70,20 @@ public class GetNetStandardTime
 
             // 异步连接服务器
             // client.BeginConnect(hostName, Convert.ToInt32(portNum), new AsyncCallback(ConnectCallback),client);
-            Debug.Log("使用BeginConnect异步方法开始连接服务器");
+            //Debug.Log("使用BeginConnect异步方法开始连接服务器");
             var connectResult = client.BeginConnect(hostName, portNum, null, null);
             var connectOK = connectResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
-            Debug.Log("连接服务器状态：" + connectOK);
+            //Debug.Log("连接服务器状态：" + connectOK);
 
             //if (client.Connected)
             if (connectOK)
             {
                 System.Net.Sockets.NetworkStream ns = client.GetStream();
-                Debug.Log("开始获取网络字节流：" + ns);
+                //Debug.Log("开始获取网络字节流：" + ns);
                 //同步读取
                 if (ns.CanRead)
                 {
-                    Debug.Log("开始同步接收远程服务器数据");
+                    //Debug.Log("开始同步接收远程服务器数据");
                     bytesRead = ns.Read(bytes, 0, bytes.Length);
                     client.Close();
                     ns.Close();
@@ -94,7 +94,7 @@ public class GetNetStandardTime
                 {
                     client.Close();
                     ns.Close();
-                    Debug.Log("网络错误！");
+                    //Debug.Log("网络错误！");
                     MyConnectCallback(connectResult);
                     break;
                 }
@@ -104,21 +104,21 @@ public class GetNetStandardTime
                 //{
                 //    byte[] result = new byte[client.Available];
                 //    ns.BeginRead(result, 0, result.Length, new AsyncCallback(MyReadCallback), ns);
-                //    Debug.Log("开始异步接收网络数据："+ns);
+                //    //Debug.Log("开始异步接收网络数据："+ns);
                 //    strResponse = Encoding.ASCII.GetString(result).Trim();
-                //    Debug.Log("得到异步接收的网络数据 strResponse ntp time:" +strResponse);
+                //    //Debug.Log("得到异步接收的网络数据 strResponse ntp time:" +strResponse);
                 //    netString = strResponse;
                 //    client.Close();
                 //    break;
                 //}
                 //catch 
                 //{ 
-                //    Debug.Log("网络错误！");
+                //    //Debug.Log("网络错误！");
                 //}
             }
             else
             {
-                Debug.Log("网络未连接");
+                //Debug.Log("网络未连接");
                 client.Close();
                 MyConnectCallback(connectResult);
                 //yield break;
@@ -128,11 +128,11 @@ public class GetNetStandardTime
             //}
             //catch (System.Exception)
             //{
-            //Debug.Log("获取错误！");
+            ////Debug.Log("获取错误！");
             //}
         }
         netString = System.Text.Encoding.ASCII.GetString(bytes, 0, bytesRead);
-        Debug.Log("得到网络标准时间 ntp time:" + netString);
+        //Debug.Log("得到网络标准时间 ntp time:" + netString);
         serverTime = netString;
         //return serverTime;
     }
@@ -154,17 +154,17 @@ public class GetNetStandardTime
             s = serverTime.Split(sp);
             // "58961 20-04-22 07:22:32 50 0 0 900.6 UTC(NIST) *"
             netTime = System.DateTime.Parse(s[1] + " " + s[2]);//得到标准时间
-            //Debug.WriteLine("get:" + dt.ToShortTimeString());
+            ////Debug.WriteLine("get:" + dt.ToShortTimeString());
             Debug.Log("得到网络标准时间:" + netTime.ToShortTimeString());
             //dt=dt.AddHours (8);
             netTime = netTime.ToLocalTime();
-            Debug.Log("转换为本地时间:" + netTime);
+            //Debug.Log("转换为本地时间:" + netTime);
             return netTime;
         }
         else
         {
             netTime = System.DateTime.Parse("20200000000000");
-            Debug.Log(" 获取网络时间失败，设置成默认时间0.");
+            //Debug.Log(" 获取网络时间失败，设置成默认时间0.");
             return netTime;
         }
     }
@@ -189,7 +189,7 @@ public class GetNetStandardTime
     //    }
     //    //打印
     //    Console.WriteLine("您收到的信息是" + data);
-    //    Debug.Log("您收到的信息是" + data);
+    //    //Debug.Log("您收到的信息是" + data);
     //}
 
     /// <summary>
@@ -203,7 +203,7 @@ public class GetNetStandardTime
         {
             if (t.Connected)
             {
-                Debug.Log("回调使用EndConnect异步方法结束异步连接服务器");
+                //Debug.Log("回调使用EndConnect异步方法结束异步连接服务器");
                 t.EndConnect(ar);//函数运行到这里就说明连接成功
             }
             else

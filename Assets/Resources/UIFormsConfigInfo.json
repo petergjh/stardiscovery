@@ -23,6 +23,10 @@
 "Value":"UIPrefabs\\HeroDetailUIForm"},
 
 {"Key":"PropDetailUIForm",
-"Value":"UIPrefabs\\PropDetailUIForm"}
+"Value":"UIPrefabs\\PropDetailUIForm"},
+
+{"Key":"DrawBoardUIForm",
+"Value":"UIPrefabs\\DrawBoardUIForm"}
+
 ]
 }

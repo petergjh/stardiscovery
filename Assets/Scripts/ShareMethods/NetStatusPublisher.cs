@@ -40,7 +40,7 @@ public class NetStatusPublisher
     {
         if (NetChanged != null)  // 如果有对象注册
         {
-            Debug.Log(" 发布事件消息，通知订阅者对接收到的消息做后续方法的操作");
+            //Debug.Log(" 发布事件消息，通知订阅者对接收到的消息做后续方法的操作");
             NetChanged(this, e);  
             
             // 委托事件异步非阻塞
@@ -86,7 +86,7 @@ public class NetStatusPublisher
             {
                 lastNetStatus = true;
                 netChangedStatusNow = "DownToUp";
-                Debug.Log("监听到事件发生：离线变为在线" + netChangedStatusNow);
+                //Debug.Log("监听到事件发生：离线变为在线" + netChangedStatusNow);
             }
 
             // 2.在线变为离线
@@ -94,21 +94,21 @@ public class NetStatusPublisher
             {
                 lastNetStatus = false;
                 netChangedStatusNow = "UpToDown";
-                Debug.Log("监听到事件发生：在线变为离线");
+                //Debug.Log("监听到事件发生：在线变为离线");
             }
 
             // 3.一开始就是离线启动的游戏
             else if (isConnectedNow == false && (lastNetStatus == false) && (startCountLocalTime == default))
             {
-                Debug.Log("Always down, start local time count");
+                //Debug.Log("Always down, start local time count");
                 netChangedStatusNow = "UpToDown";
-                Debug.Log("监听到事件发生：在线变为离线");
+                //Debug.Log("监听到事件发生：在线变为离线");
             }
 
             // 4.一直离线或一直在线则不做处理，不发消息
             else
             {
-                Debug.Log("Always up or down, nothing to do");
+                //Debug.Log("Always up or down, nothing to do");
                 netChangedStatusNow = null;
             }
 
@@ -154,19 +154,19 @@ public class NetStatusPublisher
         {
             if ((double)errCounts / serverUrls.Length >= 0.3)
             {
-                Debug.Log("网络连接异常");
+                //Debug.Log("网络连接异常");
                 isConnectedNow = false;
                 //Console.WriteLine("网络异常~连接多次无响应");
             }
             else
             {
-                Debug.Log("网络在颤抖");
+                //Debug.Log("网络在颤抖");
                 isConnectedNow = true;
             }
         }
         else
         {
-            Debug.Log("网络连接正常");
+            //Debug.Log("网络连接正常");
             isConnectedNow = true;
             //Console.WriteLine("网络正常");
         }
@@ -194,21 +194,21 @@ public class NetStatusPublisher
                 {
                     isPingSuccess = false;
                     errorCount++;
-                    Debug.LogFormat("目标服务器{0}不可达,错误计数errorCount={1}", urls[i], errorCount);
+                    //Debug.LogFormat("目标服务器{0}不可达,错误计数errorCount={1}", urls[i], errorCount);
                 }
                 // Console.WriteLine("Ping " + urls[i] + "    " + pr.Status.ToString());
-                Debug.Log("Ping " + urls[i] + "    " + pr.Status.ToString());
+                //Debug.Log("Ping " + urls[i] + "    " + pr.Status.ToString());
             }
         }
         catch
         {
-            Debug.Log("ping failed");
+            //Debug.Log("ping failed");
             isPingSuccess = false;
             errorCount = urls.Length;
         }
         //if (errorCount >= 0 && errorCount < 3)
         // isPingSuccess = true;
-        Debug.Log("ping的状态：" + isPingSuccess);
+        //Debug.Log("ping的状态：" + isPingSuccess);
         return isPingSuccess;
     }
 
@@ -227,7 +227,7 @@ public class NetStatusPublisher
     //    //Timer类是多线程
     //    System.Timers.Timer t25yi = new System.Timers.Timer(3000);//实例化Timer类，设置时间间隔为100毫秒
     //    t25yi.Elapsed += new System.Timers.ElapsedEventHandler(CheckNet);//当到达时间的时候执行MethodTimer2事件 
-    //    Debug.Log("定时检查网络状态心跳开始");
+    //    //Debug.Log("定时检查网络状态心跳开始");
     //    t25yi.AutoReset = true;//false是执行一次，true是一直执行
     //    t25yi.Enabled = true;//设置是否执行System.Timers.Timer.Elapsed事件 
     //    //}
