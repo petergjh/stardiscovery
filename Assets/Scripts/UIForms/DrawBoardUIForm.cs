@@ -106,20 +106,21 @@ namespace DemoProject
         /// </summary>
         public void Init()
         {
+            //查找子节点
             mFront = UnityHelper.FindTheChildNode(this.gameObject, "Btn_zhi1").gameObject;
             mBack = UnityHelper.FindTheChildNode(this.gameObject, "Btn_zhi2").gameObject;
-            if (mPageState == PageState.Front)
-            {
-                //如果是从正面开始，则将背面旋转90度，这样就看不见背面了
-                mBack.transform.eulerAngles = new Vector3(0, 90, 0);
-                mFront.transform.eulerAngles = Vector3.zero;
-            }
-            else
-            {
-                //从背面开始，同理
-                mFront.transform.eulerAngles = new Vector3(0, 90, 0);
-                mBack.transform.eulerAngles = Vector3.zero;
-            }
+            //if (mPageState == PageState.Front)
+            //{
+            //    //如果是从正面开始，则将背面旋转90度，这样就看不见背面了
+            //    mBack.transform.eulerAngles = new Vector3(0, 90, 0);
+            //    mFront.transform.eulerAngles = Vector3.zero;
+            //}
+            //else
+            //{
+            //    //从背面开始，同理
+            //    mFront.transform.eulerAngles = new Vector3(0, 90, 0);
+            //    mBack.transform.eulerAngles = Vector3.zero;
+            //}
         }
         private void Start()
         {
@@ -152,11 +153,17 @@ namespace DemoProject
         {
             Debug.Log("翻到后页协程");
             isActive = true;
+            //第一页在mTime时间内右移到坐标
             mFront.transform.DOBlendableLocalMoveBy(new Vector3(400, -20, 0), mTime);
+            //第二页在2倍mTime时间内弹向坐标并返回
             mBack.transform.DOPunchPosition(new Vector3(-80, 10, 0), mTime * 2, 0, 0);
+            //协程挂起等待0.3秒后继续
             yield return new WaitForSeconds(0.3f);
+            //把第二页移到所有transform组件列表的最后边（UI节点的的最下边即UI层次的最前面）
             mBack.transform.SetAsLastSibling();
+            //角度变化
             //mBack.transform.DOBlendablePunchRotation(new Vector3(10, 10, 0),1f, 1, 0);
+            //把最开始第一页再移回原点，注意是local参照坐标
             mFront.transform.DOLocalMove(new Vector3(0, 0, 0), mTime);
             isActive = false;
 
