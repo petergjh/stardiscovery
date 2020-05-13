@@ -509,7 +509,6 @@ MonoBehaviour:
   mFront: {fileID: 746140822339653190}
   mBack: {fileID: 3692094944809792120}
   mPageState: 0
-  mTime: 0.3
 --- !u!1 &5427611764921112962
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,11 +9,11 @@ using UnityEngine;
 /// <summary>
 /// 网络状态发布器
 /// </summary>
-public class NetStatusPublisher 
+public class NetStatusPublisher
 {
     private bool lastNetStatus = false;
     private static bool isConnectedNow = false;
-    private readonly DateTime startCountLocalTime =default;
+    private readonly DateTime startCountLocalTime = default;
     private static bool isPingSuccess;
 
     // 声明委托类
@@ -29,7 +29,7 @@ public class NetStatusPublisher
         public readonly string netStatusNow;
         public NetChangedEventArgs(string netStatusNow)
         {
-            this.netStatusNow=netStatusNow;
+            this.netStatusNow = netStatusNow;
         }
     }
 
@@ -41,8 +41,8 @@ public class NetStatusPublisher
         if (NetChanged != null)  // 如果有对象注册
         {
             //Debug.Log(" 发布事件消息，通知订阅者对接收到的消息做后续方法的操作");
-            NetChanged(this, e);  
-            
+            NetChanged(this, e);
+
             // 委托事件异步非阻塞
             //Delegate[] delegAry = NetChanged.GetInvocationList();
             //foreach (NetChangedEventHandler handler in delegAry)
@@ -212,7 +212,7 @@ public class NetStatusPublisher
         return isPingSuccess;
     }
 
- 
+
     //// 上一次心跳时的网络状态
     //public bool lastNetStatus = false;
     ///// <summary>
