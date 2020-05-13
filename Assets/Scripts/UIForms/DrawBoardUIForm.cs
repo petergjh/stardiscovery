@@ -47,55 +47,21 @@ namespace DemoProject
             RigisterButtonObjectEvent("Btn_zhi2",
                 p =>StartFront()
                 );
-
-
-            // 注册道具事件：神杖
-            RigisterButtonObjectEvent("BtnTicket",
-                p =>
-                {
-                    // 打开子窗体
-                    // OpenUIForm("PropDetailUIForm");
-                    OpenUIForm(ProjectConst.PROP_DETAIL_UIFORM );
-                    // 传值
-                    // 可以发送多种类型数据
-                    // KeyValueUpdate kvs = new KeyValueUpdate("ticket", "神杖道具详情:");
-                    string[] strArray = new string[] {"神杖详情", "神杖道具详情介绍。。。"};
-                    KeyValueUpdate kvs = new KeyValueUpdate("ticket",strArray);
-                    MessageCenter.SendMessage("Props", kvs);
-                }
-                );
-
-            // 注册道具事件：战靴
-            RigisterButtonObjectEvent("BtnShoe",
-                 p =>
-                {
-                    // 打开子窗体
-                    OpenUIForm("PropDetailUIForm");
-                    // 传值
-                    // KeyValueUpdate kvs = new KeyValueUpdate("shoes", "战靴道具详情:");
-                    // MessageCenter.SendMessage("Props", kvs);
-                    // 发送方法进行了封装重构
-                    // 可以发送多种类型数据
-                    string[] strArray = new string[] {"战靴详情", "战靴详情介绍。。。"};
-                    SendMessage("Props","shoes",strArray);
-                }
-
-                );
-
-            // 注册道具事件：盔甲
-            RigisterButtonObjectEvent("BtnCloth",
-                 p =>
-                {
-                    // 打开子窗体
-                    OpenUIForm("PropDetailUIForm");
-                    // 传值
-                    // KeyValueUpdate kvs = new KeyValueUpdate("cloth", "盔甲道具详情:");
-                    // MessageCenter.SendMessage("Props", kvs);
-                    // 可以发送多种类型数据
-                    string[] strArray = new string[] { "盔甲详情","盔甲详细介绍。。。。" };
-                    SendMessage("Props", "cloth", strArray);
-                }
-                );
+           
+            //// 注册道具事件：盔甲
+            //RigisterButtonObjectEvent("BtnCloth",
+            //     p =>
+            //    {
+            //        // 打开子窗体
+            //        OpenUIForm("PropDetailUIForm");
+            //        // 传值
+            //        // KeyValueUpdate kvs = new KeyValueUpdate("cloth", "盔甲道具详情:");
+            //        // MessageCenter.SendMessage("Props", kvs);
+            //        // 可以发送多种类型数据
+            //        string[] strArray = new string[] { "盔甲详情","盔甲详细介绍。。。。" };
+            //        SendMessage("Props", "cloth", strArray);
+            //    }
+            //    );
 
 
         }
@@ -107,8 +73,10 @@ namespace DemoProject
         public void Init()
         {
             //查找子节点
-            mFront = UnityHelper.FindTheChildNode(this.gameObject, "Btn_zhi1").gameObject;
-            mBack = UnityHelper.FindTheChildNode(this.gameObject, "Btn_zhi2").gameObject;
+            mFront = UnityHelper.FindTheChildNode(this.gameObject, "Img_zhi1").gameObject;
+            Debug.Log("查找到子节点mFront" + mFront.name);
+            mBack = UnityHelper.FindTheChildNode(this.gameObject, "Img_zhi2").gameObject;
+            Debug.Log("查找到子节点mBack" +mBack.name);
             //if (mPageState == PageState.Front)
             //{
             //    //如果是从正面开始，则将背面旋转90度，这样就看不见背面了
@@ -154,7 +122,7 @@ namespace DemoProject
             Debug.Log("翻到后页协程");
             isActive = true;
             //第一页在mTime时间内右移到坐标
-            mFront.transform.DOBlendableLocalMoveBy(new Vector3(400, -20, 0), mTime);
+            mFront.transform.DOBlendableLocalMoveBy(new Vector3(300, -20, 0), mTime);
             //第二页在2倍mTime时间内弹向坐标并返回
             mBack.transform.DOPunchPosition(new Vector3(-80, 10, 0), mTime * 2, 0, 0);
             //协程挂起等待0.3秒后继续
@@ -174,11 +142,11 @@ namespace DemoProject
         IEnumerator ToFront()
         {
             isActive = true;
-            mBack.transform.DOMove(new Vector3(30, -8, 0), mTime);
+            mBack.transform.DOLocalMove(new Vector3(300, -20, 0), mTime);
             yield return new WaitForSeconds(0.5f);
-            mFront.transform.DOPunchPosition(new Vector3(-20, 10, 0), mTime, 1,0);
+            mFront.transform.DOPunchPosition(new Vector3(-80, 10, 0), mTime, 1,0);
             mFront.transform.SetAsLastSibling();
-            mBack.transform.DOMove(new Vector3(0, 0, 0), mTime);
+            mBack.transform.DOLocalMove(new Vector3(0, 0, 0), mTime);
             isActive = false;
 
         }
