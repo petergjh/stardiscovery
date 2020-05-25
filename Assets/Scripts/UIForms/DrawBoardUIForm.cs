@@ -77,6 +77,8 @@ namespace DemoProject
             Debug.Log("查找到子节点mFront" + mFront.name);
             mBack = UnityHelper.FindTheChildNode(this.gameObject, "Img_zhi2").gameObject;
             Debug.Log("查找到子节点mBack" +mBack.name);
+            mFront.transform.SetAsLastSibling();
+            Debug.Log("初始化窗体时把第一页放到最前面");
             //if (mPageState == PageState.Front)
             //{
             //    //如果是从正面开始，则将背面旋转90度，这样就看不见背面了
