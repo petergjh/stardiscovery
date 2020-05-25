@@ -71,6 +71,8 @@
     <Compile Include="Assets\Scripts\ShareMethods\NetStatusPublisher.cs" />
     <Compile Include="Assets\Scripts\ShareMethods\TimerScriber.cs" />
     <Compile Include="Assets\Scripts\StartProject.cs" />
+    <Compile Include="Assets\Scripts\Steam\SteamAchievmentManager.cs" />
+    <Compile Include="Assets\Scripts\Steamworks.NET\SteamManager.cs" />
     <Compile Include="Assets\Scripts\UIForms\DrawBoardUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\HeroDetailUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\HeroInfoUIForm.cs" />
