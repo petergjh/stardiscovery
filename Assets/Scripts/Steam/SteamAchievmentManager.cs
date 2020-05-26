@@ -103,7 +103,7 @@ class AchievementManager : MonoBehaviour
     {
         if (!SteamManager.Initialized) return;
 
-        // 获取在线玩家数量
+        // 获取玩家数量
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SteamAPICall_t handleGetPlayerNum = SteamUserStats.GetNumberOfCurrentPlayers();
@@ -118,6 +118,7 @@ class AchievementManager : MonoBehaviour
                 m_bRequestedStats = true;
                 return;
             }
+
             //从 Steam 后端调出用户的统计与成就数据
             bool bSuccess = SteamUserStats.RequestCurrentStats();
             m_bRequestedStats = bSuccess;
