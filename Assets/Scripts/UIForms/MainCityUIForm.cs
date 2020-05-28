@@ -20,10 +20,7 @@ namespace DemoProject
                 p => OpenUIForm("MarketUIForm"));
             Debug.Log("注册BtnMarket点击事件，监听MarketUIForm窗体的打开");
 
-            // 事件注册：按钮，打开游戏商城
-            RigisterButtonObjectEvent("BtnDrawBoard",
-                p => OpenUIForm("DrawBoardUIForm"));
-            Debug.Log("注册BtnMarket点击事件，监听DrawBoardUIForm窗体的打开");
+      
 
             // 事件注册：按钮，返回前一页
             // RigisterButtonObjectEvent("BtnBack",

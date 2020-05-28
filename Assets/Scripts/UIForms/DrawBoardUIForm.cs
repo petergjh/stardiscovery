@@ -47,7 +47,7 @@ namespace DemoProject
             RigisterButtonObjectEvent("Btn_zhi2",
                 p =>StartFront()
                 );
-           
+
             //// 注册道具事件：盔甲
             //RigisterButtonObjectEvent("BtnCloth",
             //     p =>
@@ -62,6 +62,9 @@ namespace DemoProject
             //        SendMessage("Props", "cloth", strArray);
             //    }
             //    );
+
+
+
 
 
         }

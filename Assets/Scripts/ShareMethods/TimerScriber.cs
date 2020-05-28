@@ -2,9 +2,14 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UIFrame;
+using DemoProject;
 
-public class TimerScriber : MonoBehaviour
+public class TimerScriber : BaseUIForm
 {
+    //声明消息类型名称
+    private const string NAME = "TimerScriber";
+
     // 声明变量
     public Text countdown4text;
     private int totaltime4;
@@ -17,6 +22,32 @@ public class TimerScriber : MonoBehaviour
     private static readonly NetStatusPublisher nsp = new NetStatusPublisher();
 
     // Start is called before the first frame update
+
+    /// <summary>
+    /// 注册消息类型名称
+    /// </summary>
+    protected override void Initialization()
+    {
+        MsgTypeName = NAME;
+    }
+    protected override void ReceiveMsg(KeyValueUpdate KV)
+    {
+                switch (KV.Key)
+                {
+                      case "StartCountTimer":
+                      {
+                          Debug.Log("监听到开始计时消息：" + KV.Key + KV.Values);
+                          StartCoroutine(TimerProcess());
+                          netChanged = "DownToUp";
+
+                      }
+                        break;
+
+                      default:
+                        break;
+        }
+
+    }
     void Start()
     {
         // 启动订阅事件方法
@@ -26,7 +57,7 @@ public class TimerScriber : MonoBehaviour
         StartCoroutine(nsp.CheckNet());
 
         // 启动计时器协程
-        StartCoroutine(TimerProcess());
+        //StartCoroutine(TimerProcess());
 
         //InvokeRepeating("TimerProcess",1,3);
     }
@@ -57,6 +88,9 @@ public class TimerScriber : MonoBehaviour
         return null;
     }
 
+    //private Coroutine mLocalTimeControlIE = null;
+    //private Coroutine mNetworkTimeControlIE = null;
+
     /// <summary>
     /// 倒计时器协程
     /// </summary>
@@ -68,13 +102,13 @@ public class TimerScriber : MonoBehaviour
             //nsp.NetChanged -= TimerCount;
 
             // 访问sender中的公共字段
-            //Debug.Log("timerLoop, 网络状态：" + netChanged);
+            Debug.Log("timerLoop, 网络状态：" + netChanged);
 
             //启动网络倒计时UI协程
             if (netChanged == "DownToUp")
             {
                 StopCoroutine("LocalTimeControlIE"); // 注意协程参数用方法名称，string类型
-                //Debug.Log(" netstatus from Down to Up，关闭本地时间计时协程，开始获取网络时间");
+                Debug.Log(" netstatus from Down to Up，关闭本地时间计时协程，开始获取网络时间");
                 yield return StartCoroutine("NetworkTimeControlIE");
 
             }
@@ -82,13 +116,14 @@ public class TimerScriber : MonoBehaviour
             else if (netChanged == "UpToDown")
             {
                 StopCoroutine("NetworkTimeControlIE");
-                //Debug.Log("netstatus from Up to Down，关闭网络时间计时协程，开始获取本地时间");
+                Debug.Log("netstatus from Up to Down，关闭网络时间计时协程，开始获取本地时间");
                 yield return StartCoroutine("LocalTimeControlIE");
             }
             else
             {
-                //Debug.Log("nothing happened");
+                Debug.Log("nothing happened");
             }
+            yield return null;
 
         }
     }
@@ -126,7 +161,7 @@ public class TimerScriber : MonoBehaviour
     /// <returns></returns>
     public IEnumerator NetworkTimeControlIE()
     {
-        //Debug.Log("开始网络倒计时协程");
+        Debug.Log("开始网络倒计时协程");
 
         int nH = 00;
         int nM = 00;
@@ -138,7 +173,7 @@ public class TimerScriber : MonoBehaviour
         GetNetStandardTime netServerTime= new GetNetStandardTime();
         netServerTime.RequestNetworkTime();
 
-        //Debug.Log(" 获取时间");
+        Debug.Log(" 获取时间");
         netServerTime.DataStandardTime();
         nH = (int)netServerTime.netTime.Hour;
         nM = (int)netServerTime.netTime.Minute;
@@ -151,7 +186,7 @@ public class TimerScriber : MonoBehaviour
             {
                 break;
             }
-            //Debug.Log("开始倒计时");
+            Debug.Log("开始倒计时");
             int H = (int)totaltime4 / 60 / 60;
             int M = (int)totaltime4 / 60 % 60;
             int S = (int)totaltime4 % 60;
@@ -175,7 +210,7 @@ public class TimerScriber : MonoBehaviour
     ////Update is called once per frame
     //void Update()
     //{
-    //    //Debug.Log("开始Update倒计时");
+    //    Debug.Log("开始Update倒计时");
 
     //    int M = (int)(totaltime2 / 60);
     //    float S = totaltime2 % 60;

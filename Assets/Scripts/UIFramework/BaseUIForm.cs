@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +22,39 @@ namespace UIFrame
 
         // 定义UI窗体类型的公共属性
         public UIType CurrentUIType { get => _CurrentUIType; set => _CurrentUIType = value; }
+
+        protected string MsgTypeName = ""; 
+
+        private void Awake()
+        {
+            //初始化基础信息
+            Initialization();
+            //初始化UI信息
+            InitUIInfo();
+            //初始化UI按钮点击事件
+            InitButtonClickEvent();
+
+            if(MsgTypeName != "")
+            {
+                ReceiveMessage(MsgTypeName, ReceiveMsg);
+                Debug.Log("注册接收消息,消息类型:MsgTypeName="+MsgTypeName);
+                
+            }
+            
+        }
+
+        protected virtual void Initialization()
+        {
+        }
+
+        protected virtual void InitButtonClickEvent()
+        {
+        }
+
+        protected virtual void InitUIInfo()
+        {
+        }
+
 
         #region 窗体的四种生命周期状态: 显示、隐藏、重新显示、冻结
 
@@ -126,7 +160,7 @@ namespace UIFrame
         /// <param name="msgType">消息类型</param>
         /// <param name="msgName">消息名称</param>
         /// <param name="msgContent">消息内容</param>
-        protected void SendMessage(string msgType,string msgName, object msgContent)
+        protected void SendMessage(string msgType,string msgName, object msgContent=null)
         {
             Debug.Log("正在发送消息:" + msgType+ msgName+ msgContent);
             // 消息的内容
@@ -139,15 +173,28 @@ namespace UIFrame
         }
 
         /// <summary>
-        // 接收消息的方法也可以封装
+        /// 接收消息的方法也可以封装
         /// </summary>
         /// <param name="messageType">消息分类</param>
         /// <param name="handler">消息委托</param>
-        public void ReceiveMessage(string messageType, MessageCenter.DelegateMessageDelivery handler)
+        protected void ReceiveMessage(string messageType, MessageCenter.DelegateMessageDelivery handler)
         {
+            if(string.IsNullOrEmpty(messageType))
+            {
+                Debug.Log("接收的消息为空");
+                return;
+            }
             MessageCenter.AddMsgListener(messageType, handler);
         }
 
+        /// <summary>
+        /// 接收消息
+        /// </summary>
+        /// <param name="KV"></param>
+        protected virtual void ReceiveMsg(KeyValueUpdate KV)
+        {
+
+        }
 
 
 

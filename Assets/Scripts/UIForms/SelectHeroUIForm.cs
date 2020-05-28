@@ -28,6 +28,8 @@ namespace DemoProject
                     Debug.LogFormat("一个按钮打开多个窗体：使用Lamda表达式对同一按钮:{0}:{1}进行多个事件的委托注册响应.",this.name,p.name);
                     OpenUIForm("MainCityUIForm");
                     OpenUIForm("HeroInfoUIForm");
+                    SendMessage("TimerScriber", "StartCountTimer");
+                    Debug.Log("发送消息请求开启计时协程");
 
                 }
                 );
@@ -41,8 +43,6 @@ namespace DemoProject
             RigisterButtonObjectEvent("BtnHero2",
                 p => OpenUIForm("HeroDetailUIForm"));
             Debug.Log("注册BtnMarket点击事件，打开MarketUIForm窗体");
-
-
 
         }
 
