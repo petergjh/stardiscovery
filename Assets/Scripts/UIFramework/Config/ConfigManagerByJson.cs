@@ -75,18 +75,21 @@ namespace UIFrame
                 Debug.Log("使用 Resources.Load 方法加载配置文件");
 
                 keyvalueInfoObj = JsonUtility.FromJson<KeyValuesInfo>(configInfo.text);
-                Debug.Log("使用JsonUtility.FromJson方法把加载的Json配置文件内容还原成多组键值对组成的一个列表对象: " + keyvalueInfoObj.ConfigInfo);
+                Debug.Log("使用JsonUtility.FromJson方法把加载的Json配置文件内容还原成多组键值对" +
+                    "组成的一个列表对象: " + keyvalueInfoObj.ConfigInfo);
             }
             catch (Exception)
             {
                 // 自定义异常
-                throw new JsonAnalysisException(GetType()+"/InitAndAnalysisJson()/Json Analysis Exception ! jsonPath="+jsonPath);
+                throw new JsonAnalysisException(GetType()+
+                    "/InitAndAnalysisJson()/Json Analysis Exception ! jsonPath="+jsonPath);
             }
 
             // 数据加载到APPSetting集合中
             foreach(KeyValueNode nodeInfo in keyvalueInfoObj.ConfigInfo)
             {
-                Debug.Log("字典键值对：{"+nodeInfo.Key + " : " + nodeInfo.Value + "} 正在添加到配置数据列表对象 APPSetting 中");
+                Debug.Log("字典键值对：{"+nodeInfo.Key + " : " + nodeInfo.Value 
+                    + "} 正在添加到配置数据列表对象 APPSetting 中");
                 _AppSetting.Add(nodeInfo.Key, nodeInfo.Value);
             }
 

@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\UIForms\DrawBoardUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\HeroDetailUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\HeroInfoUIForm.cs" />
+    <Compile Include="Assets\Scripts\UIForms\LoadingSliderUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\LogonUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\MainCityUIForm.cs" />
     <Compile Include="Assets\Scripts\UIForms\MarketUIForm.cs" />

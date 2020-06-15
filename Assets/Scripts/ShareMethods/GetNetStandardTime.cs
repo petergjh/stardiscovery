@@ -153,7 +153,8 @@ public class GetNetStandardTime
             //s = str1.Split(sp);
             s = serverTime.Split(sp);
             // "58961 20-04-22 07:22:32 50 0 0 900.6 UTC(NIST) *"
-            netTime = System.DateTime.Parse(s[1] + " " + s[2]);//得到标准时间
+            //netTime = System.DateTime.Parse(s[1] + " " + s[2]);//得到标准时间
+            netTime =Convert.ToDateTime(s[1] + " " + s[2]);//得到标准时间
             ////Debug.WriteLine("get:" + dt.ToShortTimeString());
             Debug.Log("得到网络标准时间:" + netTime.ToShortTimeString());
             //dt=dt.AddHours (8);

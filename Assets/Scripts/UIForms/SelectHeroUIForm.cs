@@ -25,7 +25,9 @@ namespace DemoProject
             RigisterButtonObjectEvent("BtnConfirm",
                 p =>
                 {
-                    Debug.LogFormat("一个按钮打开多个窗体：使用Lamda表达式对同一按钮:{0}:{1}进行多个事件的委托注册响应.",this.name,p.name);
+                    Debug.LogFormat("一个按钮打开多个窗体：使用Lamda表达式" +
+                        "对同一按钮:{0}:{1}进行多个事件的委托注册响应.",this.name,p.name);
+                    OpenUIForm("LoadingSliderUIForm");
                     OpenUIForm("MainCityUIForm");
                     OpenUIForm("HeroInfoUIForm");
                     SendMessage("TimerScriber", "StartCountTimer");

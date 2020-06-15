@@ -13,8 +13,11 @@ namespace UIFrame
         // 定义一个委托. 观察者模式
         public delegate void DelegateMessageDelivery(KeyValueUpdate kv);
 
-        // 声明委托实例. 消息中心缓存集合： string: 监听的类型（ 数据大的分类）， DelegateMessageDelivery： 监听到以后要执行的委托
-        public static Dictionary<string, DelegateMessageDelivery> _dicMessages = new Dictionary<string, DelegateMessageDelivery>();
+        // 声明委托实例. 消息中心缓存集合： 
+        // string: 监听的类型（ 数据大的分类），
+        // DelegateMessageDelivery： 监听到以后要执行的委托
+        public static Dictionary<string, DelegateMessageDelivery> _dicMessages 
+            = new Dictionary<string, DelegateMessageDelivery>();
 
         /// <summary>
         /// 增加委托指向的方法：监听消息

@@ -26,7 +26,10 @@
 "Value":"UIPrefabs\\PropDetailUIForm"},
 
 {"Key":"DrawBoardUIForm",
-"Value":"UIPrefabs\\DrawBoardUIForm"}
+"Value":"UIPrefabs\\DrawBoardUIForm"},
+
+{"Key":"LoadingSliderUIForm",
+"Value":"UIPrefabs\\LoadingSliderUIForm"}
 
 ]
 }

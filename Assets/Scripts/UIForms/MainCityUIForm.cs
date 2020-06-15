@@ -14,13 +14,16 @@ namespace DemoProject
             Debug.Log("主城窗体MainCityUIForm开始初始化");
             // 窗体性质使用默认值
             //CurrentUIType.UIForms_ShowMode = UIFormShowMode.HideOther;
-
             // 事件注册：按钮，打开游戏商城
             RigisterButtonObjectEvent("BtnMarket",
                 p => OpenUIForm("MarketUIForm"));
             Debug.Log("注册BtnMarket点击事件，监听MarketUIForm窗体的打开");
 
-      
+            // 事件注册：打开DrawBoardUIForm
+            RigisterButtonObjectEvent("BtnDrawBoard",
+                p => OpenUIForm("DrawBoardUIForm"));
+            Debug.Log("打开DrawBoardUIForm窗体");
+
 
             // 事件注册：按钮，返回前一页
             // RigisterButtonObjectEvent("BtnBack",
